@@ -18,7 +18,7 @@ async function generateJson() {
     statusCounts: parserOutput.statusCounts,
     subTotals: parserOutput.subTotals
   };
-  await fsWrite(EMOJI_JSON_OUT_FILE, JSON.stringify(emojiJson, undefined, 1));
+  await fsWrite(EMOJI_JSON_OUT_FILE, JSON.stringify(emojiJson));
 }
 
 console.time("GENERATE");

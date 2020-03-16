@@ -1,6 +1,6 @@
 {
   "name": "libemoji",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A javascript emoji library that uses official Unicode emoji data files",
   "main": "dist/index.js",
   "files": [
