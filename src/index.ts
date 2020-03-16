@@ -1,3 +1,3 @@
-import emojiJson from "../raw/emoji.json";
+const emojiJson = require("../raw/emoji.json");
 
 export default emojiJson;

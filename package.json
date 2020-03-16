@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "A javascript emoji library that uses official Unicode emoji data files",
   "main": "dist/index.js",
+  "files": [
+    "dist",
+    "raw/emoji.json"
+  ],
   "scripts": {
     "build": "tsc && npm run generate",
     "generate": "node dist/generator"
