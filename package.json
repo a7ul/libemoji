@@ -1,19 +1,16 @@
 {
-  "name": "unicode-libemoji",
+  "name": "libemoji",
   "version": "1.0.0",
-  "description": "A emoji library that parses official Unicode emoji data files to generate json",
-  "main": "index.js",
+  "description": "A javascript emoji library that uses official Unicode emoji data files",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "parse": "node --inspect=5858 -r ts-node/register src/parser/parse.ts",
-    "parse:dev": "nodemon"
+    "build": "tsc && npm run generate",
+    "generate": "node dist/generator"
   },
   "author": "atulanand94@gmail.com",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^13.9.1",
-    "nodemon": "^2.0.2",
-    "ts-node": "^8.6.2",
     "typescript": "^3.8.3"
   }
 }

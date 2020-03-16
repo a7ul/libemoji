@@ -1,65 +1,13 @@
-import fs from "fs";
-import path from "path";
-import util from "util";
+import { ParserMeta, Emoji } from "./types";
 
-const fsReadFile = util.promisify(fs.readFile);
-
-const unicodeFilePath = path.resolve(
-  __dirname,
-  "..",
-  "..",
-  "raw",
-  "emoji-test.txt"
-);
-
-async function readDataFile(): Promise<string> {
-  const fileContents = await fsReadFile(unicodeFilePath, { encoding: "utf8" });
-  return fileContents;
-}
-
-function trimHeaders(fileContents: string): string {
-  // get position of first group
-  const startPosition = fileContents.search("# group:");
-  return fileContents.slice(startPosition);
-}
-
-type Emoji = {
-  group: string;
-  subgroup: string;
-  emoji: string;
-  parsedEmoji: string;
-  codePoints: number[];
-  status: string;
-  versionSince: number;
-  cldrShortName: string;
-};
-
-type Meta = {
-  current: {
-    groupName: string;
-    subgroupName: string;
-    mode: "emoji" | "command" | "status-count" | "end";
-    lineNumber: number;
-  };
-  subtotals: Record<
-    string,
-    {
-      withoutModifiers: number;
-      withModifiers: number;
-    }
-  >;
-  statusCounts: Record<string, number>;
-  emojis: Emoji[];
-};
-
-const meta: Meta = {
+const meta: ParserMeta = {
   current: {
     groupName: "unknown",
     subgroupName: "unknown",
     mode: "command",
     lineNumber: 0
   },
-  subtotals: {},
+  subTotals: {},
   statusCounts: {},
   emojis: []
 };
@@ -99,16 +47,16 @@ function handleCommand(line: string) {
     ) as RegExpMatchArray;
     const groupName = String(matches[1]).trim();
     const count = parseInt(String(matches[2]).trim());
-    meta.subtotals[groupName] = meta.subtotals[groupName] || {};
-    meta.subtotals[groupName].withoutModifiers = count;
+    meta.subTotals[groupName] = meta.subTotals[groupName] || {};
+    meta.subTotals[groupName].withoutModifiers = count;
     return;
   }
   if (subtotalRegex.test(line)) {
     const matches = line.match(subtotalRegex) as RegExpMatchArray;
     const groupName = String(matches[1]).trim();
     const count = parseInt(String(matches[2]).trim());
-    meta.subtotals[groupName] = meta.subtotals[groupName] || {};
-    meta.subtotals[groupName].withModifiers = count;
+    meta.subTotals[groupName] = meta.subTotals[groupName] || {};
+    meta.subTotals[groupName].withModifiers = count;
     return;
   }
 
@@ -181,7 +129,14 @@ function handleEmoji(line: string) {
   meta.emojis.push(emoji);
 }
 
-function parse(contents: string): any {
+function trimHeaders(fileContents: string): string {
+  // get position of first group
+  const startPosition = fileContents.search("# group:");
+  return fileContents.slice(startPosition);
+}
+
+export function parse(rawContent: string): ParserMeta {
+  const contents = trimHeaders(rawContent);
   const lines = contents.split("\n");
 
   for (let i = 0; i < lines.length; i += 1) {
@@ -204,22 +159,5 @@ function parse(contents: string): any {
     }
   }
 
-  return lines;
-}
-
-async function main() {
-  const rawContent = await readDataFile();
-  const mainContent = trimHeaders(rawContent);
-  parse(mainContent);
   return meta;
 }
-
-main()
-  .then(data => {
-    console.log(data);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-
-setInterval(() => {}, 2000);
