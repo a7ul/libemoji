@@ -9,13 +9,7 @@ export type Emoji = {
   cldrShortName: string;
 };
 
-export type ParserMeta = {
-  current: {
-    groupName: string;
-    subgroupName: string;
-    mode: "emoji" | "command" | "status-count" | "end";
-    lineNumber: number;
-  };
+export type EmojiJSON = {
   subTotals: Record<
     string,
     {
@@ -26,3 +20,12 @@ export type ParserMeta = {
   statusCounts: Record<string, number>;
   emojis: Emoji[];
 };
+
+export interface ParserMeta extends EmojiJSON {
+  current: {
+    groupName: string;
+    subgroupName: string;
+    mode: "emoji" | "command" | "status-count" | "end";
+    lineNumber: number;
+  };
+}
